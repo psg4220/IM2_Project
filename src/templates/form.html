@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Example</title>
+</head>
+<body>
+    <h2>Create Account</h2>
+    <form method="post" action="/create_account">
+        <label for="username">Name:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Create Currency</h2>
+    <form method="post" action="/create_currency">
+        <label for="currency_name">Currency Name:</label>
+        <input type="text" id="currency_name" name="currency_name" required>
+        <br>
+        <label for="account_id">Master User ID:</label>
+        <input type="text" id="account_id" name="account_id" required>
+        <br>
+        <label for="master_password">Password:</label>
+        <input type="password" id="master_password" name="master_password" required>
+        <br>
+        <label for="max_supply">Supply Amount:</label>
+        <input type="text" id="max_supply" name="max_supply" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+    <h2>Transfer Funds</h2>
+    <form method="post" action="/transfer_funds">
+        <label for="sender_account_id">Sender User ID:</label>
+        <input type="text" id="sender_account_id" name="sender_account_id" required>
+        <br>
+        <label for="auth_transfer_password">Sender User Password:</label>
+        <input type="password" id="auth_transfer_password" name="auth_transfer_password" required>
+        <br>
+        <label for="receiver_account_id">Receiver User ID:</label>
+        <input type="text" id="receiver_account_id" name="receiver_account_id" required>
+        <br>
+        <label for="currency_id">Currency ID:</label>
+        <input type="text" id="currency_id" name="currency_id" required>
+        <br>
+        <label for="amount">Amount:</label>
+        <input type="text" id="amount" name="amount" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
