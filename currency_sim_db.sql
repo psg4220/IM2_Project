@@ -196,19 +196,6 @@ BEGIN
 
 END
 
-CREATE PROCEDURE retrieve_bank_statement(
-    IN p_username VARCHAR(250),
-    IN p_password VARCHAR(250),
-    IN p_currency_name VARCHAR(250)
-)
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM username WHERE username = p_username AND pass = p_password) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account doesnt exist';
-    END IF;
-
-    SELECT receiver_account, currency_name, amount, time_created FROM transaction_record_view WHERE sender_account = p_username AND currency_name = p_currency_name;
-END
-
 CREATE PROCEDURE delete_account(
     IN p_username VARCHAR(250),
     IN p_password VARCHAR(250)
