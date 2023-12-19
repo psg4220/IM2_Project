@@ -6,9 +6,9 @@ app = Flask(__name__)
 database = DatabaseManager().database
 
 
-@app.route("/", methods=['GET'])
-def form():
-    return render_template('form.html')
+@app.route('/')
+def main_page():
+    return "<h1>Hello</h1>"
 
 
 @app.route("/create_account", methods=['POST'])
@@ -49,7 +49,50 @@ def create_currency():
             )
         except Exception as e:
             return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
-    return jsonify({'error': 'Method Not Allowed'}), 405  # Method Not Allowed status code
+    return jsonify({'error': 'Method Not Allowed'}), 405
+
+
+@app.route('/view_currency', methods=['GET'])
+def view_currency():
+    if request.method == 'GET':
+        try:
+            cursor = database.cursor()
+            cursor.execute('SELECT * FROM currency')
+            res = cursor.fetchall()
+            data = []
+            for currency in res:
+                data.append(
+                    {
+                        'currency_id': currency[0],
+                        'currency_name': currency[1],
+                        'master_account': currency[2]
+                    }
+                )
+            cursor.close()
+            return jsonify(data)
+        except Exception as e:
+            return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
+    return jsonify({'error': 'Method Not Allowed'}), 405
+
+
+@app.route('/view_currency/<id>', methods=['GET'])
+def view_currency_with_id(user_id):
+    if request.method == 'GET':
+        try:
+            cursor = database.cursor()
+            cursor.execute('SELECT * FROM currency WHERE id = %s', (user_id,))
+            res = cursor.fetchall()[0]
+            cursor.close()
+            return jsonify(
+                {
+                    'currency_id': res[0],
+                    'currency_name': res[1],
+                    'master_account': res[2]
+                }
+            ), 200
+        except Exception as e:
+            return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
+    return jsonify({'error': 'Method Not Allowed'}), 405
 
 
 @app.route("/transfer_funds", methods=['POST'])
@@ -75,7 +118,6 @@ def transfer_funds():
 
         except Exception as e:
             return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
-
     return jsonify({'error': 'Method Not Allowed'}), 405
 
 
@@ -83,7 +125,7 @@ def transfer_funds():
 def delete_account():
     if request.method == 'POST':
         try:
-            username = request.form.get('delete_account_name')
+            username = request.form.get('delete_account_username')
             password = request.form.get('delete_account_password')
             cursor = database.cursor()
             cursor.callproc('delete_account',
@@ -99,29 +141,13 @@ def delete_account():
     return jsonify({'error': 'Method Not Allowed'}), 405
 
 
-@app.route('/retrieve_balance/username', methods=['GET'])
-def retrieve_balance_username():
+@app.route('/retrieve_balance/<username>', methods=['GET'])
+def retrieve_balance_username(username):
     if request.method == 'GET':
         try:
-            username = request.args.get('retrieve_balance_username')
             cursor = database.cursor()
             cursor.execute('SELECT currency_name,balance FROM currency_balance_view WHERE account_name = %s',
                            (username,))
-            res = cursor.fetchall()
-            cursor.close()
-            return jsonify(res)
-        except Exception as e:
-            return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
-    return jsonify({'error': 'Method Not Allowed'}), 405
-
-
-@app.route('/retrieve_balance/user_id', methods=['GET'])
-def retrieve_balance_user_id():
-    if request.method == 'GET':
-        try:
-            user_id = request.args.get('retrieve_balance_user_id')
-            cursor = database.cursor()
-            cursor.execute('SELECT currency_name,balance FROM currency_balance WHERE account_id = %s', (user_id,))
             res = cursor.fetchall()
             cursor.close()
             return jsonify(res)
@@ -144,11 +170,10 @@ def retrieve_transaction_record():
     return jsonify({'error': 'Method Not Allowed'}), 405
 
 
-@app.route('/retrieve_transaction_record/username', methods=['GET'])
-def retrieve_transaction_record_username():
+@app.route('/retrieve_transaction_record/<username>', methods=['GET'])
+def retrieve_transaction_record_username(username):
     if request.method == 'GET':
         try:
-            username = request.args.get('retrieve_transaction_record_username')
             cursor = database.cursor()
             cursor.execute('SELECT * FROM transaction_record_view WHERE sender_account = %s OR receiver_account = %s',
                            (username, username))
@@ -158,3 +183,93 @@ def retrieve_transaction_record_username():
         except Exception as e:
             return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
     return jsonify({'error': 'Method Not Allowed'}), 405
+
+
+@app.route('/get_account_id/<username>', methods=['GET'])
+def get_account_id(username):
+    if request.method == 'GET':
+        try:
+            cursor = database.cursor()
+            cursor.execute('SELECT id FROM username WHERE username = %s', (username,))
+            res = cursor.fetchone()
+            cursor.close()
+            return jsonify(
+                {
+                    'user_id': res[0]
+                }
+            )
+        except Exception as e:
+            return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
+    return jsonify({'error': 'Method Not Allowed'}), 405
+
+
+@app.route('/get_account_username/<user_id>', methods=['GET'])
+def get_account_username(user_id):
+    if request.method == 'GET':
+        try:
+            cursor = database.cursor()
+            cursor.execute('SELECT username FROM username WHERE id = %s', (user_id,))
+            res = cursor.fetchone()
+            cursor.close()
+            return jsonify(
+                {
+                    'username': res[0]
+                }
+            )
+        except Exception as e:
+            return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
+    return jsonify({'error': 'Method Not Allowed'}), 405
+
+
+@app.route('/get_currency_id/<currency_name>', methods=['GET'])
+def get_currency_id(currency_name):
+    if request.method == 'GET':
+        try:
+            cursor = database.cursor()
+            cursor.execute('SELECT id FROM currency WHERE name = %s', (currency_name,))
+            res = cursor.fetchone()
+            cursor.close()
+            return jsonify(
+                {
+                    'currency_id': res[0]
+                }
+            )
+        except Exception as e:
+            return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
+    return jsonify({'error': 'Method Not Allowed'}), 405
+
+
+@app.route('/get_currency_name/<currency_id>', methods=['GET'])
+def get_currency_name(currency_id):
+    if request.method == 'GET':
+        try:
+            cursor = database.cursor()
+            cursor.execute('SELECT name FROM currency WHERE id = %s', (currency_id,))
+            res = cursor.fetchone()
+            cursor.close()
+            return jsonify(
+                {
+                    'currency_name': res[0]
+                }
+            )
+        except Exception as e:
+            return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
+    return jsonify({'error': 'Method Not Allowed'}), 405
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
