@@ -37,8 +37,8 @@ def test_delete_account(username, password):
     return json.dumps(res.json(), indent=4)
 
 
-def test_retrieve_balance(user_id):
-    res = requests.get(f'{BASE_URL}/retrieve_balance/{user_id}')
+def test_retrieve_balance(username):
+    res = requests.get(f'{BASE_URL}/retrieve_balance/{username}')
     assert res.ok
     return json.dumps(res.json(), indent=4)
 
@@ -91,9 +91,24 @@ def test_transfer_funds(sender_account_id, auth_transfer_password, receiver_acco
     assert res.ok
     return json.dumps(res.json(), indent=4)
 
+def test_transaction_record():
+    res = requests.get(f'{BASE_URL}/retrieve_transaction_record')
+    assert res.ok
+    return json.dumps(res.json(), indent=4)
+
+
+def test_transaction_record(username):
+    res = requests.get(f'{BASE_URL}/retrieve_transaction_record/{username}')
+    assert res.ok
+    return json.dumps(res.json(), indent=4)
+
 
 def main():
-    print(test_transfer_funds(test_get_account_id('John Doe'), '1234', test_get_account_id('Nina'), test_get_currency_id('ARD'), 35000))
+    print(test_retrieve_balance('George'))
+    # print(test_transfer_funds(test_get_account_id('Nina'), '1234', test_get_account_id('George'), test_get_currency_id('ARD'), 500000000))
+    # print(json.loads(test_retrieve_balance('John Doe'))[2])
+    # print(test_transaction_record('John Doe'))
+
 
 if "__main__" == __name__:
     main()

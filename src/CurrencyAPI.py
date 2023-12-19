@@ -144,7 +144,14 @@ def retrieve_balance_username(username):
                            (username,))
             res = cursor.fetchall()
             cursor.close()
-            return jsonify(res)
+            data = {}
+            for r in res:
+                data.update(
+                    {
+                        str(r[0]): r[1]
+                    }
+                )
+            return jsonify(data)
         except Exception as e:
             return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
     return jsonify({'error': 'Method Not Allowed'}), 405
@@ -158,7 +165,19 @@ def retrieve_transaction_record():
             cursor.execute('SELECT * FROM transaction_record_view')
             res = cursor.fetchall()
             cursor.close()
-            return jsonify(res)
+            data = []
+            for r in res:
+                data.append(
+                    {
+                        'transaction_id': r[0],
+                        'sender': r[1],
+                        'receiver': r[2],
+                        'currency': r[3],
+                        'amount': r[4],
+                        'time_created': r[5]
+                    }
+                )
+            return jsonify(data)
         except Exception as e:
             return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
     return jsonify({'error': 'Method Not Allowed'}), 405
@@ -173,7 +192,19 @@ def retrieve_transaction_record_username(username):
                            (username, username))
             res = cursor.fetchall()
             cursor.close()
-            return jsonify(res)
+            data = []
+            for r in res:
+                data.append(
+                    {
+                        'transaction_id': r[0],
+                        'sender': r[1],
+                        'receiver': r[2],
+                        'currency': r[3],
+                        'amount': r[4],
+                        'time_created': r[5]
+                    }
+                )
+            return jsonify(data)
         except Exception as e:
             return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
     return jsonify({'error': 'Method Not Allowed'}), 405
