@@ -5,12 +5,6 @@ app = Flask(__name__)
 
 database = DatabaseManager().database
 
-
-@app.route('/')
-def main_page():
-    return "<h1>Hello</h1>"
-
-
 @app.route("/create_account", methods=['POST'])
 def create_account():
     if request.method == "POST":

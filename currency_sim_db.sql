@@ -88,6 +88,10 @@ BEGIN
     DECLARE receiver_balance DECIMAL(12,2);
     DECLARE receiver_account_count INT;
 
+    IF p_sender_account_id = p_receiver_account_id THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Sender and Receiver ID cannot be same';
+    END IF;
+
     -- Check if sender account exists and password is correct
     SELECT balance INTO sender_balance
     FROM currency_balance cb

@@ -93,8 +93,7 @@ def test_transfer_funds(sender_account_id, auth_transfer_password, receiver_acco
 
 
 def main():
-    ...
-
+    print(test_transfer_funds(test_get_account_id('John Doe'), '1234', test_get_account_id('Nina'), test_get_currency_id('ARD'), 35000))
 
 if "__main__" == __name__:
     main()
