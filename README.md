@@ -1,7 +1,7 @@
 # Currency Simulator
 Information Management 2 Project (2023-2024)
 ## Members
-+ Justin Vijar
++ Justin Vijar (psg4220)
 + Clint Villaflores
 + Jonas Munalem
 + Shane Adrian Opinion
